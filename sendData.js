@@ -27,16 +27,33 @@ async function registerAndLogin() {
     console.log("User already exists");
   }
   const response = await axios.post("http://localhost:3000/login", credentials);
-  return response.data.token;
+  return response.data;
 }
 
 // Function to submit data
-async function submitData(token) {
+async function submitData(customerData) {
   for (const data of dataset) {
     try {
-      const response = await axios.post("http://localhost:3000/users", data, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.post(
+        "http://localhost:3000/users",
+        {
+          user_id: data.user_id ?? (Math.random() * 100000).toString(),
+          signup_time: data.signup_time,
+          name: data.name,
+          address_lines: data.address_lines,
+          postal_area: data.postal_area,
+          postal_code: data.postal_code,
+          country: data.country,
+          email: data.email,
+          phone_number: data.phone_number,
+          account_status: data.account_status,
+          date_of_birth: data.date_of_birth,
+          customer_id: customerData.customer.customerId,
+        },
+        {
+          headers: { Authorization: `Bearer ${customerData.token}` },
+        }
+      );
       console.log(`Submitted data for user: ${data.name}`);
     } catch (error) {
       console.error(
@@ -48,8 +65,8 @@ async function submitData(token) {
 }
 
 async function main() {
-  const token = await registerAndLogin();
-  await submitData(token);
+  const response = await registerAndLogin();
+  await submitData(response);
 }
 
 main();

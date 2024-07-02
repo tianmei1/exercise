@@ -8,10 +8,10 @@ const User = require("./user")(sequelize, DataTypes);
 const Customer = require("./customer")(sequelize, DataTypes);
 const Alert = require("./alert")(sequelize, DataTypes);
 
-Customer.hasMany(User, { foreignKey: "customerId" });
-User.belongsTo(Customer, { foreignKey: "customerId" });
-User.hasMany(Alert, { foreignKey: "userId" });
-Alert.belongsTo(User, { foreignKey: "userId" });
+Customer.hasMany(User, { foreignKey: "customer_id" });
+User.belongsTo(Customer, { foreignKey: "customer_id" });
+User.hasMany(Alert, { foreignKey: "user_id" });
+Alert.belongsTo(User, { foreignKey: "user_id" });
 
 sequelize.sync(); // Sync the database
 

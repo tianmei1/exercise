@@ -2,36 +2,40 @@ const express = require("express");
 const { User } = require("../models");
 const { authenticate } = require("../middlewares/auth");
 const router = new express.Router();
+const { Op } = require("sequelize");
 
 router.post("/users", authenticate, async (req, res) => {
   try {
     const {
-      userId,
+      user_id,
+      signup_time,
       name,
-      addressLines,
-      postalTown,
-      postalCode,
+      address_lines,
+      postal_area,
+      postal_code,
       country,
-      dateOfBirth,
       email,
-      phoneNumber,
-      accountStatus,
-      signupTime,
+      phone_number,
+      account_status,
+      date_of_birth,
+      customer_id,
     } = req.body;
     const newUser = await User.create({
-      userId,
+      id: Date.now() + Math.random(),
+      user_id,
+      signup_time,
       name,
-      addressLines,
-      postalTown,
-      postalCode,
+      address_lines,
+      postal_area,
+      postal_code,
       country,
-      dateOfBirth,
       email,
-      phoneNumber,
-      accountStatus,
-      signupTime,
-      customerId: req.customer.customerId,
+      phone_number,
+      account_status,
+      date_of_birth,
+      customer_id,
     });
+
     res
       .status(201)
       .json({ message: "User submitted successfully", data: newUser });
@@ -45,8 +49,9 @@ router.post("/users", authenticate, async (req, res) => {
 
 router.get("/users", authenticate, async (req, res) => {
   try {
+    const customerId = req.customer.customer_id; // Ensure this value is correct
     const users = await User.findAll({
-      where: { customerId: req.customer.customerId },
+      where: { customer_id: { [Op.eq]: customerId } },
     });
     res.status(200).json(users);
   } catch (error) {
